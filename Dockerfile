@@ -1,16 +1,45 @@
 FROM debian:bookworm
 ENV DEBIAN_FRONTEND=noninteractive
+ENV SHELL=/usr/bin/zsh
 
-# Instala git e certificados
+# Instala git, certificados e dependências para build do PostgreSQL, zsh e fonts
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git ca-certificates \
+    && apt-get install -y --no-install-recommends \
+    git \
+    ca-certificates \
+    make \
+    gcc \
+    tar \
+    libreadline-dev \
+    zlib1g-dev \
+    zsh \
+    wget \
+    curl \
+    fontconfig \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Clona a branch estável 18 do PostgreSQL (clone raso para acelerar)
 RUN mkdir -p /opt/src \
     && git clone --depth 1 --branch REL_18_STABLE https://git.postgresql.org/git/postgresql.git /opt/src/postgres-18
 
-# Diretório de trabalho padrão (o compose monta o host em /workspace)
+# Instala oh-my-zsh, powerlevel10k, plugins e Meslo Nerd Font
+RUN git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git /root/.oh-my-zsh \
+    && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /root/.oh-my-zsh/custom/themes/powerlevel10k \
+    && git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git /root/.oh-my-zsh/custom/plugins/zsh-autosuggestions \
+    && git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git /root/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting \
+    && git clone --depth=1 https://github.com/ryanoasis/nerd-fonts.git /tmp/nerd-fonts \
+    && /tmp/nerd-fonts/install.sh Meslo \
+    && fc-cache -fv || true \
+    && rm -rf /tmp/nerd-fonts
+
+# Configura .zshrc para usar powerlevel10k e plugins
+RUN cp /root/.oh-my-zsh/templates/zshrc.zsh-template /root/.zshrc \
+    && sed -i 's|^ZSH=.*|ZSH="/root/.oh-my-zsh"|' /root/.zshrc \
+    && sed -i 's|^ZSH_THEME=.*|ZSH_THEME="powerlevel10k/powerlevel10k"|' /root/.zshrc \
+    && sed -i 's|^plugins=.*|plugins=(git)|' /root/.zshrc \
+    && printf '\n# Plugins (sourced after oh-my-zsh)\nsource $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh\nsource $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh\n' >> /root/.zshrc
+
 WORKDIR /workspace
 
-CMD ["/bin/bash"]
+CMD ["/usr/bin/zsh", "-l"]
