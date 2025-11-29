@@ -3,7 +3,7 @@ name: ${PROJECT_NAME}
 services:
   pg-build:
     build: .
-    image: pg-build:${IMAGE_TAG}
+    image: ${PROJECT_NAME}-pg-build:${IMAGE_TAG}
     container_name: ${PROJECT_NAME}-pg-build
     hostname: ${PROJECT_NAME}-pg-build
     tty: true
@@ -12,3 +12,9 @@ services:
       - ./:/workspace
     working_dir: /workspace
     command: bash
+    networks:
+      - containet
+
+networks:
+  containet:
+    driver: bridge
