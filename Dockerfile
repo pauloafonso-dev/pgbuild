@@ -6,22 +6,11 @@ ENV PATH="/usr/local/pgsql/bin:${PATH}"
 # Instala git, certificados e dependências para build do PostgreSQL, zsh e fonts
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-    git \
-    ca-certificates \
-    make \
-    gcc \
-    tar \
-    libreadline-dev \
-    zlib1g-dev \
-    zsh \
-    wget \
-    curl \
-    fontconfig \
-    unzip \
-    pkg-config \
-    libicu-dev \
-    bison \
-    flex \
+    git ca-certificates make gcc g++ tar \
+    libreadline-dev zlib1g-dev libssl-dev libxml2-dev libxslt1-dev \
+    zsh wget curl fontconfig unzip pkg-config libicu-dev \
+    bison flex libperl-dev python3 python3-dev tcl-dev \
+    libpam0g-dev libkrb5-dev libldap2-dev libcurl4-openssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Clona a branch estável 18 do PostgreSQL (clone raso para acelerar)
