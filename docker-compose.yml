@@ -13,8 +13,9 @@ services:
       - ./:/workspace
       - ./pgsql:/usr/local/pgsql
       - pgdata:/var/lib/postgresql/data
+      - ./dotfiles:/workspace/dotfiles
     working_dir: /workspace
-    command: bash
+    command: ["/usr/bin/zsh","-l"]                   # inicia zsh como shell padrão
     networks:
       - containet
 

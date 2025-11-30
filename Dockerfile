@@ -42,6 +42,17 @@ RUN cp /root/.oh-my-zsh/templates/zshrc.zsh-template /root/.zshrc \
     && printf '\n# Plugins (sourced after oh-my-zsh)\nsource $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh\nsource $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh\n' >> /root/.zshrc \
     && printf '\n# Add PostgreSQL bin to PATH\nexport PATH="/usr/local/pgsql/bin:$PATH"\n' >> /root/.zshrc
 
+# salva versões padrão dos dotfiles em local não montado (para uso pelo entrypoint)
+RUN mkdir -p /usr/local/share/dotfiles-defaults \
+    && cp -a /root/.zshrc /usr/local/share/dotfiles-defaults/.zshrc \
+    && cp -a /root/.p10k.zsh /usr/local/share/dotfiles-defaults/.p10k.zsh || true \
+    && cp -a /root/.oh-my-zsh /usr/local/share/dotfiles-defaults/oh-my-zsh
+
+# copia entrypoint e dá permissão
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 WORKDIR /workspace
 
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["/usr/bin/zsh", "-l"]
