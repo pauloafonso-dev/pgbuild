@@ -18,6 +18,10 @@ RUN apt-get update \
     curl \
     fontconfig \
     unzip \
+    pkg-config \
+    libicu-dev \
+    bison \
+    flex \
     && rm -rf /var/lib/apt/lists/*
 
 # Clona a branch estável 18 do PostgreSQL (clone raso para acelerar)
