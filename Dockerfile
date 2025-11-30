@@ -1,6 +1,7 @@
 FROM debian:bookworm
 ENV DEBIAN_FRONTEND=noninteractive
 ENV SHELL=/usr/bin/zsh
+ENV PATH="/usr/local/pgsql/bin:${PATH}"
 
 # Instala git, certificados e dependências para build do PostgreSQL, zsh e fonts
 RUN apt-get update \
@@ -38,7 +39,8 @@ RUN cp /root/.oh-my-zsh/templates/zshrc.zsh-template /root/.zshrc \
     && sed -i 's|^ZSH=.*|ZSH="/root/.oh-my-zsh"|' /root/.zshrc \
     && sed -i 's|^ZSH_THEME=.*|ZSH_THEME="powerlevel10k/powerlevel10k"|' /root/.zshrc \
     && sed -i 's|^plugins=.*|plugins=(git)|' /root/.zshrc \
-    && printf '\n# Plugins (sourced after oh-my-zsh)\nsource $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh\nsource $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh\n' >> /root/.zshrc
+    && printf '\n# Plugins (sourced after oh-my-zsh)\nsource $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh\nsource $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh\n' >> /root/.zshrc \
+    && printf '\n# Add PostgreSQL bin to PATH\nexport PATH="/usr/local/pgsql/bin:$PATH"\n' >> /root/.zshrc
 
 WORKDIR /workspace
 

@@ -6,10 +6,13 @@ services:
     image: ${PROJECT_NAME}-pg-build:${IMAGE_TAG}
     container_name: ${PROJECT_NAME}-pg-build
     hostname: ${PROJECT_NAME}-pg-build
+    restart: unless-stopped
     tty: true
     stdin_open: true
     volumes:
       - ./:/workspace
+      - ./pgsql:/usr/local/pgsql
+      - pgdata:/var/lib/postgresql/data
     working_dir: /workspace
     command: bash
     networks:
@@ -18,3 +21,6 @@ services:
 networks:
   containet:
     driver: bridge
+
+volumes:
+  pgdata:
