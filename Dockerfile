@@ -4,18 +4,21 @@ ENV SHELL=/usr/bin/zsh
 ENV PATH="/usr/local/pgsql/bin:${PATH}"
 
 # Instala git, certificados e dependências para build do PostgreSQL, zsh e fonts
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    git ca-certificates make gcc g++ tar \
-    libreadline-dev zlib1g-dev libssl-dev libxml2-dev libxslt1-dev \
-    zsh wget curl fontconfig unzip pkg-config libicu-dev \
-    bison flex libperl-dev python3 python3-dev tcl-dev \
-    libpam0g-dev libkrb5-dev libldap2-dev libcurl4-openssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential gcc make bison flex pkg-config perl python3 \
+    libreadline-dev zlib1g-dev libssl-dev libxml2-dev libxslt1-dev libicu-dev \
+    ca-certificates git wget curl sudo zsh locales fontconfig \
+    && rm -rf /var/lib/apt/lists/* \
+    && locale-gen C.UTF-8
+
+# criar usuário não privilegiado para build/testes
+RUN useradd -m -s /bin/bash pgbuild && \
+    mkdir -p /opt/src /workspace && \
+    chown -R pgbuild:pgbuild /opt/src /workspace
 
 # Clona a branch estável 18 do PostgreSQL (clone raso para acelerar)
-RUN mkdir -p /opt/src \
-    && git clone --depth 1 --branch REL_18_STABLE https://git.postgresql.org/git/postgresql.git /opt/src/postgres-18
+RUN git clone --depth 1 --branch REL_18_STABLE https://git.postgresql.org/git/postgresql.git /opt/src/postgres-18 && \
+    chown -R pgbuild:pgbuild /opt/src/postgres-18
 
 # Instala oh-my-zsh, powerlevel10k, plugins e Meslo Nerd Font
 RUN git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git /root/.oh-my-zsh \
