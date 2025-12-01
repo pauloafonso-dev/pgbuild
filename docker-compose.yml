@@ -3,9 +3,9 @@ name: ${PROJECT_NAME}
 services:
   pg-build:
     build: .
-    image: ${PROJECT_NAME}-pg-build:${IMAGE_TAG}
-    container_name: ${PROJECT_NAME}-pg-build
-    hostname: ${PROJECT_NAME}-pg-build
+    image: ${PROJECT_NAME}_pg-build:${IMAGE_TAG}
+    container_name: ${PROJECT_NAME}_pg-build
+    hostname: ${PROJECT_NAME}_pg-build
     restart: unless-stopped
     tty: true
     stdin_open: true
@@ -19,10 +19,10 @@ services:
     working_dir: /workspace
     command: ["/usr/bin/zsh","-l"]                   # inicia zsh como shell padrão
     networks:
-      - containet
+      - pg-net
 
 networks:
-  containet:
+  pg-net:
     driver: bridge
 
 volumes:
