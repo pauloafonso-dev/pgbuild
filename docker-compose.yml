@@ -5,7 +5,7 @@ services:
     build: .
     image: ${PROJECT_NAME}_pg-build:${IMAGE_TAG}
     container_name: ${PROJECT_NAME}_pg-build
-    hostname: ${PROJECT_NAME}_pg-build
+    hostname: pg-build
     restart: unless-stopped
     tty: true
     stdin_open: true
