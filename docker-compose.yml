@@ -13,13 +13,12 @@ services:
       - TZ=${TZ}
     volumes:
       - ./:/workspace
-      - ./pgsql:/usr/local/pgsql
       - pgdata:/var/lib/postgresql/data
       - ./dotfiles:/workspace/dotfiles
     working_dir: /workspace
-    command: ["/usr/bin/zsh","-l"]                   # inicia zsh como shell padrão
     networks:
       - pg-net
+    command: ["/usr/bin/zsh", "-l"]
 
 networks:
   pg-net:
